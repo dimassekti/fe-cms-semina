@@ -16,3 +16,7 @@ function App() {
 }
 
 export default App;
+
+//tips kalau profile untuk pindah halaman menggunakan params
+
+//tips kalau profile ada pagination atau tidak berpindah halaman maka menggunakan query yang tanda tanya
