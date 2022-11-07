@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import Header from "../../components/Navbar";
+// import Header from "../../components/Navbar";
 
 export default function HomePage() {
   const [data, setData] = useState([]);
@@ -69,7 +69,6 @@ export default function HomePage() {
 
   return (
     <div>
-      <Header />
       {error.status && <p style={{ color: "red" }}>{error.msg}</p>}
       <input
         type="text"
