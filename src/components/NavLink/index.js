@@ -6,9 +6,9 @@ import { useNavigate } from "react-router-dom";
 export default function NavLink({ to, children }) {
   const navigate = useNavigate();
 
-  const action = (to) => {
-    navigate(to);
-  };
+  // const action = (to) => {
+  //   navigate(to);
+  // };
 
-  return <Nav.Link onClick={() => action(to)}>{children}</Nav.Link>;
+  return <Nav.Link onClick={() => navigate(to)}>{children}</Nav.Link>;
 }

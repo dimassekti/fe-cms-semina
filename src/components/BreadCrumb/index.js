@@ -1,15 +1,22 @@
-import Breadcrumb from "react-bootstrap/Breadcrumb";
+import React from "react";
+import { Breadcrumb } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
-function BreadcrumbExample() {
+function SBreadCrumb({ textSecound, textThird, urlSecound }) {
+  const navigate = useNavigate();
   return (
-    <Breadcrumb>
-      <Breadcrumb.Item href="#">Home</Breadcrumb.Item>
-      <Breadcrumb.Item href="https://getbootstrap.com/docs/4.0/components/breadcrumb/">
-        Library
-      </Breadcrumb.Item>
-      <Breadcrumb.Item active>Data</Breadcrumb.Item>
+    <Breadcrumb className="my-2">
+      <Breadcrumb.Item onClick={() => navigate("/")}>Home</Breadcrumb.Item>
+      {!textThird && <Breadcrumb.Item active>{textSecound}</Breadcrumb.Item>}
+
+      {textThird && (
+        <Breadcrumb.Item onClick={() => navigate(urlSecound)}>
+          {textSecound}
+        </Breadcrumb.Item>
+      )}
+      {textThird && <Breadcrumb.Item active>{textThird}</Breadcrumb.Item>}
     </Breadcrumb>
   );
 }
 
-export default BreadcrumbExample;
+export default SBreadCrumb;
