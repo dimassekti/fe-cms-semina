@@ -14,10 +14,10 @@ export default function HomePage() {
       const res = await axios.get(
         "http://localhost:9000/api/v1/cms/categories"
       );
-      console.log(res.data);
+      // console.log(res.data);
       setData(res.data.data);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
   };
 
@@ -45,7 +45,7 @@ export default function HomePage() {
         }
       }
     } catch (err) {
-      console.log(err.response.data);
+      // console.log(err.response.data);
       setError({ status: true, msg: err.response.data.msg });
     }
   };
@@ -54,7 +54,7 @@ export default function HomePage() {
     const res = await axios.get(
       `http://localhost:9000/api/v1/cms/categories/${id}`
     );
-    console.log(res);
+    // console.log(res);
     setName(res.data.data.name);
     setId(res.data.data._id);
     setType(true);
