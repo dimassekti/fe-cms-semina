@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Navbar } from "react-bootstrap";
 import { Nav } from "react-bootstrap";
 import { Container } from "react-bootstrap";
@@ -12,6 +12,7 @@ export default function Header() {
         <Nav className="me-auto">
           <NavLink to="/">Home</NavLink>
           <NavLink to="/categories">Categories</NavLink>
+          <NavLink to="/talents">Talents</NavLink>
         </Nav>
       </Container>
     </Navbar>
