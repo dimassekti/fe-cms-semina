@@ -26,10 +26,9 @@ export async function postData(url, payload, formData = false) {
     //   : {};
 
     return await axios.post(`${config.api_host_dev}${url}`, payload, {
-      // headers: {
-      //   Authorization: `Bearer ${token}`,
-      //   "Content-Type": formData ? "multipart/form-data" : "application/json",
-      // },
+      headers: {
+        "Content-Type": formData ? "multipart/form-data" : "application/json",
+      },
     });
   } catch (err) {
     return handleError(err);

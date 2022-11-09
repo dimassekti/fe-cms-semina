@@ -5,10 +5,13 @@ import { useNavigate } from "react-router-dom";
 import SBreadcrumb from "../../components/BreadCrumb";
 import SButton from "./../../components/Button/index";
 import SearchInput from "../../components/SearchInput";
-import { getData } from "../../utils/fetch";
+import { deleteData, getData } from "../../utils/fetch";
+import Swal from "sweetalert2";
 
 import { config } from "../../configs";
 import debounce from "debounce-promise";
+import SAlert from "../../components/Alerts";
+
 let debouncedFetchTalents = debounce(getData, 1000);
 
 export default function TalentsPage() {
@@ -16,6 +19,10 @@ export default function TalentsPage() {
   const [data, setData] = useState([]);
   const [keyword, setKeyword] = useState("");
   const navigate = useNavigate();
+  const [alert, setAlert] = useState({
+    status: false,
+    message: "",
+  });
 
   console.log("data");
   console.log(data);
@@ -25,6 +32,10 @@ export default function TalentsPage() {
   };
 
   const getAPITalents = async () => {
+    setTimeout(() => {
+      setAlert({ status: false, message: "" });
+    }, 5000);
+
     setStatus("progress");
     const params = {
       keyword,
@@ -39,8 +50,36 @@ export default function TalentsPage() {
     getAPITalents();
   }, [keyword]);
 
+  const handleDelete = async (id) => {
+    Swal.fire({
+      title: "Apa kamu yakin?",
+      text: "Anda tidak akan dapat mengembalikan ini!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Iya, Hapus",
+      cancelButtonText: "Batal",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res = await deleteData(`/v1/cms/talents/${id}`);
+          if (res.status === 200) {
+            getAPITalents();
+            setAlert({
+              status: true,
+              message: `Berhasil hapus talent ${res.data.data.name}`,
+            });
+          }
+        } catch (error) {}
+      }
+    });
+  };
+
   return (
     <Container>
+      {alert.status && <SAlert variant="success" message={alert.message} />}
+
       <SBreadcrumb textSecound="Talents" />
       <SButton className="mb-3" action={() => navigate(`/talents/create`)}>
         Tambah
@@ -82,7 +121,7 @@ export default function TalentsPage() {
                     size="sm"
                     variant="success"
                     //jangan sampe salah `` dan '' itu beda, kalau link pakenya ``
-                    action={() => navigate(`/categories/edit/${data._id}`)}
+                    action={() => navigate(`/talents/edit/${data._id}`)}
                   >
                     Edit
                   </SButton>
@@ -90,7 +129,7 @@ export default function TalentsPage() {
                     size="sm"
                     variant="danger"
                     className="mx-2"
-                    // action={() => handleDelete(data._id)}
+                    action={() => handleDelete(data._id)}
                   >
                     Hapus
                   </SButton>

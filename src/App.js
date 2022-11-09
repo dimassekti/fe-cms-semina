@@ -5,6 +5,8 @@ import CategoriesCreatePage from "./pages/Categories/create";
 import CategoriesEditPage from "./pages/Categories/edit";
 import Navbar from "./components/Navbar";
 import TalentsPage from "./pages/Talents";
+import TalentsCreatePage from "./pages/Talents/create";
+import TalentsEditPage from "./pages/Talents/edit";
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
         <Route path="categories/create" element={<CategoriesCreatePage />} />
         <Route path="categories/edit/:id" element={<CategoriesEditPage />} />
         <Route path="talents" element={<TalentsPage />} />
+        <Route path="talents/create" element={<TalentsCreatePage />} />
+        <Route path="talents/edit/:id" element={<TalentsEditPage />} />
       </Routes>
     </BrowserRouter>
   );

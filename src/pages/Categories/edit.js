@@ -1,8 +1,7 @@
-import React, { Component, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 import SBreadcrumb from "../../components/BreadCrumb";
 import SForm from "./form";
-import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import SAlert from "../../components/Alerts";
 import Swal from "sweetalert2";
