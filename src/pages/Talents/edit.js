@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 import SBreadCrumb from "../../components/BreadCrumb";
-import SAlert from "../../components/Alerts";
+import SAlert from "../../components/Alert";
 import Form from "./form";
 import { getData, postData, putData } from "../../utils/fetch";
 import { useNavigate, useParams } from "react-router-dom";

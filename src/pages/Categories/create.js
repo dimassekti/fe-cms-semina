@@ -3,7 +3,7 @@ import { Container } from "react-bootstrap";
 import SBreadcrumb from "../../components/BreadCrumb";
 import SForm from "./form";
 import { useNavigate } from "react-router-dom";
-import SAlert from "../../components/Alerts";
+import SAlert from "../../components/Alert";
 import Swal from "sweetalert2";
 import { postData } from "../../utils/fetch";
 
@@ -43,10 +43,10 @@ export default function CategoriesCreatePage() {
         setIsLoading(false);
         navigate("/categories");
       }
-    } catch (err) {
+    } catch (error) {
       // console.log(err.response);
       setIsLoading(false);
-      setErrors({ ...errors, status: true, message: err.response.data.msg });
+      setErrors({ ...errors, status: true, message: error.response.data.msg });
     }
   };
   return (

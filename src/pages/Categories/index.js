@@ -4,7 +4,7 @@ import SBreadcrumb from "../../components/BreadCrumb";
 import SButton from "./../../components/Button/index";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import SAlert from "../../components/Alerts";
+import SAlert from "../../components/Alert";
 import Swal from "sweetalert2";
 import { getData, deleteData } from "../../utils/fetch";
 
@@ -34,7 +34,7 @@ export default function CategoriesPage() {
           message: "",
         });
       }, 3000);
-      const res = await debouncedFetchCategories("/v1/cms/categories");
+      const res = await debouncedFetchCategories(`/v1/cms/categories`);
       if (res.status === 200) {
         setData(res.data.data);
         setStatus("success");

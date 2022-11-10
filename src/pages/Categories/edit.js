@@ -3,7 +3,7 @@ import { Container } from "react-bootstrap";
 import SBreadcrumb from "../../components/BreadCrumb";
 import SForm from "./form";
 import { useNavigate, useParams } from "react-router-dom";
-import SAlert from "../../components/Alerts";
+import SAlert from "../../components/Alert";
 import Swal from "sweetalert2";
 import { getData, putData } from "../../utils/fetch";
 

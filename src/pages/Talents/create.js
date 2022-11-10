@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Container } from "react-bootstrap";
 import SBreadCrumb from "../../components/BreadCrumb";
-import SAlert from "../../components/Alerts";
+import SAlert from "../../components/Alert";
 import Form from "./form";
 import { postData } from "../../utils/fetch";
 import { useNavigate } from "react-router-dom";
@@ -92,15 +92,7 @@ function TalentsCreatePage() {
 
       const res = await postData("/v1/cms/talents", payload);
       if (res.status === 201) {
-        // dispatch(
-        //   setNotif(
-        //     true,
-        //     "success",
-        //     `berhasil tambah talents ${res.data.data.name}`
-        //   )
-        // );
         Swal.fire({
-          // position: "top-end",
           icon: "success",
           title: `${res.data.data.name} berhasil ditambahkan`,
           showConfirmButton: false,
@@ -111,12 +103,6 @@ function TalentsCreatePage() {
       }
     } catch (error) {
       setIsLoading(false);
-      // setAlert({
-      //   ...alert,
-      //   status: true,
-      //   type: "danger",
-      //   message: res.response.data.msg,
-      // });
     }
   };
 

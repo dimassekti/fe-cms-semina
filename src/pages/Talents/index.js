@@ -10,7 +10,7 @@ import Swal from "sweetalert2";
 
 import { config } from "../../configs";
 import debounce from "debounce-promise";
-import SAlert from "../../components/Alerts";
+import SAlert from "../../components/Alert";
 
 let debouncedFetchTalents = debounce(getData, 1000);
 
