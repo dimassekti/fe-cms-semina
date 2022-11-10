@@ -9,6 +9,7 @@ import TalentsEditPage from "./pages/Talents/edit";
 import EventPage from "./pages/Events/index";
 import EventCreatePage from "./pages/Events/create";
 import EventEditPage from "./pages/Events/edit";
+import SigninPage from "./pages/Signin";
 
 import Navbar from "./components/Navbar";
 
@@ -18,6 +19,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="" element={<HomePage />} />
+        <Route path="signin" element={<SigninPage />} />
         <Route path="categories" element={<CategoriesPage />} />
         <Route path="categories/create" element={<CategoriesCreatePage />} />
         <Route path="categories/edit/:id" element={<CategoriesEditPage />} />
