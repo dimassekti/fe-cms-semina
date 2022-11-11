@@ -35,11 +35,13 @@ export default function CategoriesCreatePage() {
       if (res.status === 201) {
         Swal.fire({
           // position: "top-end",
+
           icon: "success",
           title: `${res.data.data.name} berhasil ditambahkan`,
           showConfirmButton: false,
           timer: 1500,
         });
+
         setIsLoading(false);
         navigate("/categories");
       }

@@ -3,51 +3,21 @@ import { Container, Table, Spinner } from "react-bootstrap";
 import SBreadcrumb from "../../components/BreadCrumb";
 import SButton from "./../../components/Button/index";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import SAlert from "../../components/Alert";
 import Swal from "sweetalert2";
-import { getData, deleteData } from "../../utils/fetch";
-
-import debounce from "debounce-promise";
-let debouncedFetchCategories = debounce(getData, 1000);
+import { deleteData } from "../../utils/fetch";
+import { fetchCategories } from "../../redux/categories/actions";
+import { useDispatch, useSelector } from "react-redux";
+import { setNotif } from "./../../redux/notif/actions";
 
 export default function CategoriesPage() {
-  const [status, setStatus] = useState("idle");
-  const [alert, setAlert] = useState({
-    status: false,
-    message: "",
-  });
+  const dispatch = useDispatch();
+  const { notif, categories } = useSelector((state) => state);
   const navigate = useNavigate();
-  const [data, setData] = useState([]);
-
-  // console.log("data>>");
-  // console.log(data);
-
-  const getAPICategories = async () => {
-    try {
-      //untuk mengatur durasi alert bisa menggunakan setTimeout seperti ini.
-
-      setStatus("progress");
-      setTimeout(() => {
-        setAlert({
-          status: false,
-          message: "",
-        });
-      }, 3000);
-      const res = await debouncedFetchCategories(`/v1/cms/categories`);
-      if (res.status === 200) {
-        setData(res.data.data);
-        setStatus("success");
-      }
-      // console.log(res.data);
-    } catch (err) {
-      // console.log(err);
-    }
-  };
 
   useEffect(() => {
-    getAPICategories();
-  }, []);
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   const handleDelete = async (id) => {
     Swal.fire({
@@ -64,34 +34,25 @@ export default function CategoriesPage() {
         try {
           const res = await deleteData(`/v1/cms/categories/${id}`);
           if (res.status === 200) {
-            getAPICategories();
-            setAlert({
-              status: true,
-              message: `Berhasil hapus data ${res.data.data.name}`,
-            });
+            dispatch(fetchCategories());
+            dispatch(
+              setNotif(
+                true,
+                "success",
+                `berhasil hapus kategori ${res.data.data.name}`
+              )
+            );
           }
         } catch (error) {}
       }
     });
   };
 
-  // const handleDelete = async (id) => {
-  //   try {
-  //     const res = await axios.delete(
-  //       `http://localhost:9000/api/v1/cms/categories/${id}`
-  //     );
-  //     if (res.status === 200) {
-  //       getAPICategories();
-
-  //       setStatus(true);
-  //       setMessage("Berhasil hapus data");
-  //     }
-  //   } catch (error) {}
-  // };
-
   return (
     <Container>
-      {alert.status && <SAlert variant="success" message={alert.message} />}
+      {notif.status && (
+        <SAlert variant={notif.typeNotif} message={notif.message} />
+      )}
 
       <SBreadcrumb textSecound="Categories" />
       <SButton action={() => navigate(`/categories/create`)}>Tambah</SButton>
@@ -103,7 +64,7 @@ export default function CategoriesPage() {
           </tr>
         </thead>
         <tbody>
-          {status === "progress" ? (
+          {categories.status === "progress" ? (
             <tr>
               <td colSpan={4} style={{ textAlign: "center" }}>
                 <div className="flex items-center justify-center">
@@ -111,8 +72,8 @@ export default function CategoriesPage() {
                 </div>
               </td>
             </tr>
-          ) : data.length > 0 ? (
-            data.map((data, index) => (
+          ) : categories.data.length > 0 ? (
+            categories.data.map((data, index) => (
               <tr key={index}>
                 <td>{data.name}</td>
                 <td>
