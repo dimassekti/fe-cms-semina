@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import listen from "./redux/listener";
+import { BrowserRouter } from "react-router-dom";
+import { listen } from "./redux/listener";
 import { AppRoutes } from "./routes";
 
 function App() {

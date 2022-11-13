@@ -9,7 +9,7 @@ export function EventsRoute() {
     <Routes>
       <Route path="/" element={<Events />} />
       <Route path="/create" element={<Create />} />
-      <Route path="/edit/:eventId" element={<Edit />} />
+      <Route path="/edit/:id" element={<Edit />} />
     </Routes>
   );
 }

@@ -9,7 +9,7 @@ export function CategoriesRoute() {
     <Routes>
       <Route path="/" element={<Categories />} />
       <Route path="/create" element={<Create />} />
-      <Route path="/edit/:categoryId" element={<Edit />} />
+      <Route path="/edit/:id" element={<Edit />} />
     </Routes>
   );
 }

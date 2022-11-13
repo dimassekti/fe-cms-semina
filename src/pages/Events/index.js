@@ -8,93 +8,36 @@ import SearchInput from "../../components/SearchInput";
 import { deleteData, getData } from "../../utils/fetch";
 import Swal from "sweetalert2";
 
-import debounce from "debounce-promise";
 import SAlert from "../../components/Alert";
 import SelectBox from "./../../components/SelectBox";
+import { useDispatch, useSelector } from "react-redux";
 
-let debouncedFetchEvents = debounce(getData, 1000);
+import {
+  fetchListCategories,
+  fetchListTalents,
+} from "../../redux/lists/actions";
+import {
+  fetchEvents,
+  setCategory,
+  setKeyword,
+  setTalent,
+} from "../../redux/events/actions";
+import { setNotif } from "../../redux/notif/actions";
+import SBreadCrumb from "../../components/BreadCrumb";
 
-export default function EventPage() {
-  const [status, setStatus] = useState("idle");
-  const [data, setData] = useState([]);
-  const [keyword, setKeyword] = useState("");
-
-  //talents
-  const [talent, setTalent] = useState(null);
-  const [listTalents, setListTalents] = useState([]);
-  //category
-  const [category, setCategory] = useState(null);
-  const [listCategories, setListCategories] = useState([]);
-
+export default function EventsPage() {
+  const { lists, events } = useSelector((state) => state);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [alert, setAlert] = useState({
-    status: false,
-    message: "",
-  });
-
-  console.log("category");
-  console.log(category);
-
-  const handleKeyword = (e) => {
-    setKeyword(e.target.value);
-  };
-
-  const getAPIEvents = async () => {
-    setTimeout(() => {
-      setAlert({ status: false, message: "" });
-    }, 5000);
-
-    setStatus("progress");
-    let params = {
-      keyword,
-    };
-
-    if (category) {
-      params = { ...params, category: category.value };
-    }
-    if (talent) {
-      params = { ...params, talent: talent.value };
-    }
-    const res = await debouncedFetchEvents("/v1/cms/events", params);
-    if (res.status === 200) {
-      setData(res.data.data);
-      setStatus("success");
-    }
-  };
-  useEffect(() => {
-    getAPIEvents();
-  }, [keyword, category, talent]);
-
-  const getApiListCategories = async () => {
-    const res = await getData(`/v1/cms/categories`);
-    console.log(res);
-    const temp = [];
-    res.data.data.forEach((res) => {
-      temp.push({
-        value: res._id,
-        label: res.name,
-      });
-    });
-    setListCategories(temp);
-  };
-
-  const getApiListTalents = async () => {
-    const res = await getData(`/v1/cms/talents`);
-    console.log(res);
-    const temp = [];
-    res.data.data.forEach((res) => {
-      temp.push({
-        value: res._id,
-        label: res.name,
-      });
-    });
-    setListTalents(temp);
-  };
 
   useEffect(() => {
-    getApiListCategories();
-    getApiListTalents();
-  }, []);
+    dispatch(fetchEvents());
+  }, [dispatch, events.keyword, events.category, events.talent]);
+
+  useEffect(() => {
+    dispatch(fetchListCategories());
+    dispatch(fetchListTalents());
+  }, [dispatch]);
 
   const handleDelete = async (id) => {
     Swal.fire({
@@ -108,16 +51,17 @@ export default function EventPage() {
       cancelButtonText: "Batal",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        try {
-          const res = await deleteData(`/v1/cms/events/${id}`);
-          if (res.status === 200) {
-            getAPIEvents();
-            setAlert({
-              status: true,
-              message: `Berhasil hapus event ${res.data.data.title}`,
-            });
-          }
-        } catch (error) {}
+        const res = await deleteData(`/v1/cms/events/${id}`);
+        if (res.status === 200) {
+          dispatch(fetchEvents());
+          dispatch(
+            setNotif(
+              true,
+              "success",
+              `berhasil hapus events ${res.data.data.title}`
+            )
+          );
+        }
       }
     });
   };
@@ -125,37 +69,33 @@ export default function EventPage() {
   return (
     <Container>
       {alert.status && <SAlert variant="success" message={alert.message} />}
-
-      <SBreadcrumb textSecound="Events" />
-      <SButton className="mb-3" action={() => navigate(`/events/create`)}>
+      <SBreadCrumb textSecound="Events" />
+      <SButton className="mb-3" action={() => navigate("/events/create")}>
         Tambah
       </SButton>
       <Row>
         <Col>
-          <SearchInput handleChange={handleKeyword} query={keyword} />
-
-          {/* <SearchInput
-            name="keyword"
-            query={events.keyword}
+          <SearchInput
             handleChange={(e) => dispatch(setKeyword(e.target.value))}
-          /> */}
+            query={events.keyword}
+          />
         </Col>
         <Col>
           <SelectBox
             placeholder={"Masukan pencarian kategori"}
-            value={category}
-            options={listCategories}
+            value={events.category}
+            options={lists.categories}
             isClearable={true}
-            handleChange={(value) => setCategory(value)}
+            handleChange={(value) => dispatch(setCategory(value))}
           />
         </Col>
         <Col>
           <SelectBox
             placeholder={"Masukan pencarian pembicara"}
-            value={talent}
-            options={listTalents}
+            value={events.talent}
+            options={lists.talents}
             isClearable={true}
-            handleChange={(value) => setTalent(value)}
+            handleChange={(value) => dispatch(setTalent(value))}
           />
         </Col>
       </Row>
@@ -172,7 +112,7 @@ export default function EventPage() {
           </tr>
         </thead>
         <tbody>
-          {status === "progress" ? (
+          {events.status === "process" ? (
             <tr>
               <td colSpan={6} style={{ textAlign: "center" }}>
                 <div className="flex items-center justify-center">
@@ -180,20 +120,18 @@ export default function EventPage() {
                 </div>
               </td>
             </tr>
-          ) : data.length > 0 ? (
-            data.map((data, index) => (
+          ) : events.data.length > 0 ? (
+            events.data.map((data, index) => (
               <tr key={index}>
                 <td>{data.title}</td>
                 <td>{data.venueName}</td>
                 <td>{data.statusEvent}</td>
                 <td>{data.category.name}</td>
                 <td>{data.talent.name}</td>
-
                 <td>
                   <SButton
                     size="sm"
                     variant="success"
-                    //jangan sampe salah `` dan '' itu beda, kalau link pakenya ``
                     action={() => navigate(`/events/edit/${data._id}`)}
                   >
                     Edit
