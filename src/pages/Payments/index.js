@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { Container, Table, Image, Spinner } from "react-bootstrap";
+import { Container, Image, Spinner, Table } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import SBreadCrumb from "../../components/BreadCrumb";
 import SButton from "../../components/Button";
-import { useNavigate } from "react-router-dom";
-import SearchInput from "../../components/SearchInput";
-import { deleteData } from "../../utils/fetch";
-import Swal from "sweetalert2";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchPayments } from "../../redux/payments/actions";
 import SAlert from "../../components/Alert";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchTalents, setKeyword } from "../../redux/talents/actions";
+import Swal from "sweetalert2";
+import { deleteData } from "../../utils/fetch";
 import { setNotif } from "../../redux/notif/actions";
 import { config } from "../../configs";
 
-export default function TalentsPage() {
-  const dispatch = useDispatch();
-  const { talents } = useSelector((state) => state);
+function PaymentsPage() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { payments, notif } = useSelector((state) => state);
 
   useEffect(() => {
-    dispatch(fetchTalents());
-  }, [dispatch, talents.keyword]);
+    dispatch(fetchPayments());
+  }, [dispatch]);
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
     Swal.fire({
       title: "Apa kamu yakin?",
       text: "Anda tidak akan dapat mengembalikan ini!",
@@ -33,44 +33,40 @@ export default function TalentsPage() {
       cancelButtonText: "Batal",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const res = await deleteData(`/v1/cms/talents/${id}`);
-        if (res.status === 200) {
-          dispatch(fetchTalents());
-          dispatch(
-            setNotif(
-              true,
-              "success",
-              `berhasil hapus talents ${res.data.data.name}`
-            )
-          );
-        }
+        const res = await deleteData(`/v1/cms/payments/${id}`);
+
+        dispatch(
+          setNotif(
+            true,
+            "success",
+            `berhasil hapus kategori ${res.data.data.type}`
+          )
+        );
+
+        dispatch(fetchPayments());
       }
     });
   };
 
   return (
-    <Container>
-      {alert.status && <SAlert variant="success" message={alert.message} />}
-      <SBreadCrumb textSecound="Talents" />
-      <SButton className="mb-3" action={() => navigate("/talents/create")}>
+    <Container className="mt-3">
+      {notif.status && (
+        <SAlert variant={notif.variant} message={notif.message} />
+      )}
+      <SBreadCrumb textSecound="Payments" />
+      <SButton className="mb-3" action={() => navigate("/payments/create")}>
         Tambah
       </SButton>
-      <SearchInput
-        handleChange={(e) => dispatch(setKeyword(e.target.value))}
-        query={talents.keyword}
-      />
-
       <Table striped bordered hover className="my-3">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Role</th>
+            <th>Type</th>
             <th>Avatar</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          {talents.status === "process" ? (
+          {payments.status === "process" ? (
             <tr>
               <td colSpan={4} style={{ textAlign: "center" }}>
                 <div className="flex items-center justify-center">
@@ -78,11 +74,10 @@ export default function TalentsPage() {
                 </div>
               </td>
             </tr>
-          ) : talents.data.length > 0 ? (
-            talents.data.map((data, index) => (
+          ) : payments.data.length > 0 ? (
+            payments.data.map((data, index) => (
               <tr key={index}>
-                <td>{data.name}</td>
-                <td>{data.role}</td>
+                <td>{data.type}</td>
                 <td>
                   <Image
                     height={40}
@@ -95,7 +90,7 @@ export default function TalentsPage() {
                   <SButton
                     size="sm"
                     variant="success"
-                    action={() => navigate(`v1/talents/edit/${data._id}`)}
+                    action={() => navigate(`/payments/edit/${data._id}`)}
                   >
                     Edit
                   </SButton>
@@ -122,3 +117,5 @@ export default function TalentsPage() {
     </Container>
   );
 }
+
+export default PaymentsPage;
